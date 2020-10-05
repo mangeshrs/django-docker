@@ -1,0 +1,39 @@
+version: '2.2'
+
+services:
+
+  db:
+    image: mysql:latest
+    ports:
+      - '3306:3306'
+    restart: always
+    environment:
+       MYSQL_DATABASE: 'django_demo'
+       MYSQL_USER: 'root'
+       MYSQL_PASSWORD: 'root'
+       MYSQL_ROOT_PASSWORD: 'root'
+    volumes:
+      - rush-db:/var/lib/mysql
+
+
+  rush:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    environment:
+      - DJANGO_SETTINGS_MODULE=joust_studio.dev_settings
+      - PYTHONUNBUFFERED=0
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/rush
+      - rushtemp:/rushtemp
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+      
+
+volumes:
+  rush-db:
+  rushtemp:
